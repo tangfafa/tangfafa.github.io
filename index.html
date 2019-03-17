@@ -301,15 +301,72 @@
       
         
           
-            <h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>###左右布局###</p>
-<p>####HTML代码####<br>    <div class="container"><br>        <div class="left">left</div><br>        <div class="right">right</div><br>    </div></p>
-<p>####CSS代码####<br>    .left {<br>        width: 100px;<br>        height: 150px;<br>        background-color: #FFB5BF;<br>    }<br>    .right {<br>        height: 150px;<br>        background-color: #94E8FF;<br>    }</p>
-<p>####1. 设置 display 为 inline-block ####<br>    .container {<br>        font-size: 0;    /<em> 消除间距 </em>/<br>    }<br>    .left, .right {<br>        display: inline-block;<br>    }<br>    .right {<br>        width: calc(100% - 100px);   /<em> 计算宽度，运算符号左右一定要有空格 </em>/<br>    }</p>
-<p>####2. 使用 float####<br>    .left {<br>        float: left;<br>    }<br>    .right {<br>        margin-left: 100px;   /<em> 为 .left 留出空间 </em>/<br>    }<br>    .container {<br>        overflow: hidden;    /<em> 别忘了清除浮动 </em>/<br>    }<br>    我们可以还设置 .left、.right 均左浮动，这时，它们便会紧贴着排列在一行。因为 .right 是浮动的，所以需要计算宽度。<br>    .left {<br>        float: left;<br>    }<br>    .right {<br>        float: left;<br>        width: calc(100% - 100px);<br>    }<br>    .container {<br>        overflow: hidden;<br>    }</p>
-<p>###左中右布局###</p>
-<p>####HTML代码####<br>    <div class="container"><br>        <div class="left">left</div><br>        <div class="center">center</div><br>        <div class="right">right</div><br>    </div></p>
-<p>####CSS代码####<br>    body {<br>        min-width: 630px;<br>    }<br>    .center {<br>        width: 100%;<br>        height: 150px;<br>        background-color: #94E8FF;<br>    }<br>    .left {<br>        width: 100px;<br>        height: 150px;<br>        background-color: #FFB5BF;<br>    }<br>    .right {<br>        width: 200px;<br>        height: 150px;<br>        background-color: #8990D5;<br>    }</p>
-<p>结构说明：左右两部分宽度固定，中间的部分填充剩余所有宽度。<br>常用场景：最左边摆放一张图片，中间摆放说明性文字，右边摆放相关操作的小图标。<br>之前的做法虽然有实现但是不完美。思路如下（简单描述为左中结构）：<br>首先考虑中间的要拉伸铺满剩下的宽度，必须宽度设置成百分比100%，用box-sizing设置为border-box，然后配合padding，给左右留固定的宽度，左右的内容放到padding区域与其重叠，使用float浮动是不能重叠的，所以一定要有一个是绝对定位，全部都使用绝对定位是没有问题的，但是绝对定位有个特性，定位的元素从文档流中删除，不占用空间，导致父元素不能自动适应高度，如果全部都绝对定位，父元素不显示指定高度，那么高度会为0，导致后面的元素和要排列的左中右结构重叠了。浮动元素本来也是脱离了文档流，不占用空间，但是父元素设置成内联块之后，它能占用空间（不理解内联块的性质）。于是就用绝对定位和浮动来混合实现，多数情况下，左边的图片宽度和高度都固定，于是就把左边的内容设置成绝对定位，中间的内容设置成浮动了，父元素再设置个最小高度为左边内容的高度，规避高度适应问题。<br>上述实现如果遇到左边和中间的内容高度都不确定，那就不好使了。今天终于想出另一种方案，思路如下：<br>全部都用浮动，关键要解决中间元素宽度为100%之后，左中右总宽度超过父元素宽度，导致换行的问题。借助外边距margin设置为负值解决了。中间内容把padding-left设置成左右部分宽度的和，把margin-left设置成padding-left对应的负数，就缩减了真实宽度了，恰好合适。</p>
+            <h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><h3 id="左右布局"><a href="#左右布局" class="headerlink" title="左右布局"></a>左右布局</h3><h4 id="HTML代码"><a href="#HTML代码" class="headerlink" title="HTML代码"></a>HTML代码</h4><pre><code>&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;left&quot;&gt;left&lt;/div&gt;
+    &lt;div class=&quot;right&quot;&gt;right&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><h4 id="CSS代码"><a href="#CSS代码" class="headerlink" title="CSS代码"></a>CSS代码</h4><pre><code>.left {
+    width: 100px;
+    height: 150px;
+    background-color: #FFB5BF;
+}
+.right {
+    height: 150px;
+    background-color: #94E8FF;
+}
+</code></pre><h4 id="1-设置-display-为-inline-block"><a href="#1-设置-display-为-inline-block" class="headerlink" title="1. 设置 display 为 inline-block"></a>1. 设置 display 为 inline-block</h4><pre><code>.container {
+    font-size: 0;    /* 消除间距 */
+}
+.left, .right {
+    display: inline-block;
+}
+.right {
+    width: calc(100% - 100px);   /* 计算宽度，运算符号左右一定要有空格 */
+}
+</code></pre><h4 id="2-使用-float"><a href="#2-使用-float" class="headerlink" title="2. 使用 float"></a>2. 使用 float</h4><pre><code>.left {
+    float: left;
+}
+.right {
+    margin-left: 100px;   /* 为 .left 留出空间 */
+}
+.container {
+    overflow: hidden;    /* 别忘了清除浮动 */
+}
+我们可以还设置 .left、.right 均左浮动，这时，它们便会紧贴着排列在一行。因为 .right 是浮动的，所以需要计算宽度。
+.left {
+    float: left;
+}
+.right {
+    float: left;
+    width: calc(100% - 100px);
+}
+.container {
+    overflow: hidden;
+}
+</code></pre><h3 id="左中右布局"><a href="#左中右布局" class="headerlink" title="左中右布局"></a>左中右布局</h3><h4 id="HTML代码-1"><a href="#HTML代码-1" class="headerlink" title="HTML代码"></a>HTML代码</h4><pre><code>&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;left&quot;&gt;left&lt;/div&gt;
+    &lt;div class=&quot;center&quot;&gt;center&lt;/div&gt;       
+    &lt;div class=&quot;right&quot;&gt;right&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><h4 id="CSS代码-1"><a href="#CSS代码-1" class="headerlink" title="CSS代码"></a>CSS代码</h4><pre><code>body {
+    min-width: 630px;
+}
+.center {
+    width: 100%;
+    height: 150px;
+    background-color: #94E8FF;
+}
+.left {
+    width: 100px;
+    height: 150px;
+    background-color: #FFB5BF;
+}
+.right {
+    width: 200px;
+    height: 150px;
+    background-color: #8990D5;
+}
+</code></pre><p>结构说明：左右两部分宽度固定，中间的部分填充剩余所有宽度。<br>常用场景：最左边摆放一张图片，中间摆放说明性文字，右边摆放相关操作的小图标。<br>之前的做法虽然有实现但是不完美。思路如下（简单描述为左中结构）：<br>首先考虑中间的要拉伸铺满剩下的宽度，必须宽度设置成百分比100%，用box-sizing设置为border-box，然后配合padding，给左右留固定的宽度，左右的内容放到padding区域与其重叠，使用float浮动是不能重叠的，所以一定要有一个是绝对定位，全部都使用绝对定位是没有问题的，但是绝对定位有个特性，定位的元素从文档流中删除，不占用空间，导致父元素不能自动适应高度，如果全部都绝对定位，父元素不显示指定高度，那么高度会为0，导致后面的元素和要排列的左中右结构重叠了。浮动元素本来也是脱离了文档流，不占用空间，但是父元素设置成内联块之后，它能占用空间（不理解内联块的性质）。于是就用绝对定位和浮动来混合实现，多数情况下，左边的图片宽度和高度都固定，于是就把左边的内容设置成绝对定位，中间的内容设置成浮动了，父元素再设置个最小高度为左边内容的高度，规避高度适应问题。<br>上述实现如果遇到左边和中间的内容高度都不确定，那就不好使了。今天终于想出另一种方案，思路如下：<br>全部都用浮动，关键要解决中间元素宽度为100%之后，左中右总宽度超过父元素宽度，导致换行的问题。借助外边距margin设置为负值解决了。中间内容把padding-left设置成左右部分宽度的和，把margin-left设置成padding-left对应的负数，就缩减了真实宽度了，恰好合适。</p>
 <pre><code>.container{
     display:inline-block;
     width:100%;
@@ -329,11 +386,24 @@
     padding-left: 150px;
     margin-left: -150px;
 }
-</code></pre><p>###水平居中###</p>
-<p>####行内元素居中####<br>    .div1{<br>        text-align:center;<br>    }<br>    <div class="div1">Hello world</div></p>
-<p>####块状元素居中####<br>    .div1{<br>        width:200px;<br>        border:1px solid red;<br>        margin:0 auto;<br>    }<br>    <div class="div1">Hello world</div></p>
-<p>###垂直居中###<br>    .wrap h2{<br>        margin:0;<br>        height:100px;<br>        line-height:100px;<br>        background:#ccc;<br>    }</p>
-<pre><code>&lt;div class=&quot;wrap&quot;&gt;
+</code></pre><h3 id="水平居中"><a href="#水平居中" class="headerlink" title="水平居中"></a>水平居中</h3><h4 id="行内元素居中"><a href="#行内元素居中" class="headerlink" title="行内元素居中"></a>行内元素居中</h4><pre><code>.div1{
+    text-align:center;
+}
+&lt;div class=&quot;div1&quot;&gt;Hello world&lt;/div&gt;
+</code></pre><h4 id="块状元素居中"><a href="#块状元素居中" class="headerlink" title="块状元素居中"></a>块状元素居中</h4><pre><code>.div1{
+    width:200px;
+    border:1px solid red;
+    margin:0 auto;
+}
+&lt;div class=&quot;div1&quot;&gt;Hello world&lt;/div&gt;
+</code></pre><h3 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h3><pre><code>.wrap h2{
+    margin:0;
+    height:100px;
+    line-height:100px;
+    background:#ccc;
+}
+
+&lt;div class=&quot;wrap&quot;&gt;
     &lt;h2&gt;Hello world&lt;/h2&gt;
 &lt;/div&gt;
 </code></pre>
